@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-ethgas"
+version = "0.1.0"
+authors = [
+  { name="gaspy503", email="gaspy503@gmail.com" },
+]
+dynamic = ["dependencies"]
+description = "Unofficial EthGas client packages"
+readme = "README.md"
+requires-python = ">=3.11.0,<3.11.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+"Homepage" = "https://github.com/gaspy503/python-ethgas"
+"Bug Tracker" = "https://github.com/gaspy503/python-ethgas/issues"
