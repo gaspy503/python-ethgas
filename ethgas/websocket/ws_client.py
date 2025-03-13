@@ -117,6 +117,7 @@ class WsClient:
             None
 
         """
+        time.sleep(2)
         self.__ws_session.send("ping")
 
     def is_connected(self) -> bool:
@@ -199,157 +200,96 @@ class WsClient:
         self.__send_message(message=login_message)
 
     # region subscription events
-    def subscribe_market_update(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_market_update(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
         Subscribe to market update channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
-        Returns:
-            None
-        """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.PRECONF_MARKET_UPDATE,
-                                                   market_type=market_type)
-        self.__logger.debug(f"Subscribing market update, {message=}.")
-        self.__send_message(message=message)
-
-    def unsubscribe_market_update(self, market_type: ws_constants.MarketType) -> None:
-        """
-        Unsubscribe to market update channel.
-        Args:
-            market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
         """
         message = self.create_subscription_message(channel=ws_constants.Channel.Public.PRECONF_MARKET_UPDATE,
                                                    market_type=market_type,
-                                                   unsubscribe=True)
-        self.__logger.debug(f"Unsubscribing market update, {message=}.")
+                                                   is_subscribe=is_subscribe
+                                                   )
+        self.__logger.debug(f"Subscribing market update, {message=}.")
         self.__send_message(message=message)
 
-    def subscribe_market_price_history(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_candlestick_update(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
         Subscribe to market price history channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
 
         """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.MARKET_PRICE_HISTORY,
-                                                   market_type=market_type)
+        message = self.create_subscription_message(channel=ws_constants.Channel.Public.CANDLESTICK_UPDATE,
+                                                   market_type=market_type,
+                                                   is_subscribe=is_subscribe)
         self.__logger.debug(f"Subscribing market price history, {message=}.")
         self.__send_message(message=message)
 
-    def unsubscribe_market_price_history(self, market_type: ws_constants.MarketType) -> None:
-        """
-        Unsubscribe to market price history channel.
-        Args:
-            market_type: inclusionPreconf or wholeBlock
-
-        Returns:
-            None
-
-        """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.MARKET_PRICE_HISTORY,
-                                                   market_type=market_type,
-                                                   unsubscribe=True)
-        self.__logger.debug(f"Unsubscribing market price history, {message=}.")
-        self.__send_message(message=message)
-
-    def subscribe_recent_trades(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_recent_trades_update(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
         Subscribe to recent trades channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
 
         """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.RECENT_TRADES,
-                                                   market_type=market_type)
-        self.__logger.debug(f"Subscribing recent trades, {message=}.")
-        self.__send_message(message=message)
-
-    def unsubscribe_recent_trades(self, market_type: ws_constants.MarketType) -> None:
-        """
-        Unsubscribe to recent trades channel.
-        Args:
-            market_type: inclusionPreconf or wholeBlock
-
-        Returns:
-            None
-
-        """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.RECENT_TRADES,
+        message = self.create_subscription_message(channel=ws_constants.Channel.Public.RECENT_TRADES_UPDATE,
                                                    market_type=market_type,
-                                                   unsubscribe=True)
-        self.__logger.debug(f"Unsubscribing recent trades, {message=}.")
+                                                   is_subscribe=is_subscribe)
         self.__send_message(message=message)
 
-    def subscribe_orderbook(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_orderbook(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
         Subscribe to orderbook channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
 
         """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.ORDERBOOK,
-                                                   market_type=market_type)
-        self.__logger.debug(f"Subscribing orderbook, {message=}.")
-        self.__send_message(message=message)
-
-    def unsubscribe_orderbook(self, market_type: ws_constants.MarketType) -> None:
-        """
-        Unsubscribe to orderbook channel.
-        Args:
-            market_type: inclusionPreconf or wholeBlock
-
-        Returns:
-            None
-
-        """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.ORDERBOOK,
+        message = self.create_subscription_message(channel=ws_constants.Channel.Public.ORDERBOOK_UPDATE,
                                                    market_type=market_type,
-                                                   unsubscribe=True)
-        self.__logger.debug(f"Unsubscribing orderbook, {message=}.")
+                                                   is_subscribe=is_subscribe)
         self.__send_message(message=message)
 
-    def subscribe_market_info(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_ticker_update(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
         Subscribe to market info channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
 
         """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.MARKET_INFO,
-                                                   market_type=market_type)
-        self.__logger.debug(f"Subscribing orderbook, {message=}.")
+        message = self.create_subscription_message(channel=ws_constants.Channel.Public.TICKER_UPDATE,
+                                                   market_type=market_type,
+                                                   is_subscribe=is_subscribe)
         self.__send_message(message=message)
 
-    def unsubscribe_market_info(self, market_type: ws_constants.MarketType) -> None:
+    def subscribe_block_builder_update(self, market_type: ws_constants.MarketType, is_subscribe: bool = True) -> None:
         """
-        Unsubscribe to market info channel.
+        Subscribe to market info channel.
         Args:
             market_type: inclusionPreconf or wholeBlock
-
+            is_subscribe: bool
         Returns:
             None
 
         """
-        message = self.create_subscription_message(channel=ws_constants.Channel.Public.MARKET_INFO,
+        message = self.create_subscription_message(channel=ws_constants.Channel.Public.BLOCK_BUILDER_UPDATE,
                                                    market_type=market_type,
-                                                   unsubscribe=True)
-        self.__logger.debug(f"Unsubscribing orderbook, {message=}.")
+                                                   is_subscribe=is_subscribe)
         self.__send_message(message=message)
 
     # endregion
@@ -374,18 +314,18 @@ class WsClient:
 
     @staticmethod
     def create_subscription_message(channel: str, market_type: ws_constants.MarketType = None,
-                                    unsubscribe: bool = False) -> dict:
+                                    is_subscribe: bool = False) -> dict:
         """
         Create subscription message.
         Args:
             channel: Websocket channel
             market_type: inclusionPreconf or wholeBlock
-            unsubscribe: bool
+            is_subscribe: bool
 
         Returns:
             dict: subscription message
         """
-        op = "unsubscribe" if unsubscribe else "subscribe"
+        op = "subscribe" if is_subscribe else "unsubscribe"
         arg = {"channel": channel}
         if market_type is not None:
             arg["marketType"] = market_type.value
@@ -448,7 +388,7 @@ class WsClient:
             self.__subscribed_channels.append(message_obj.get("arg"))
         channel = message_obj.get("e", None)
         if channel is not None:
-            if channel == ws_constants.Channel.Public.ORDERBOOK:
+            if channel == ws_constants.Channel.Public.ORDERBOOK_UPDATE:
                 self.on_orderbook_data(message=message_obj)
             elif channel == ws_constants.Channel.Public.PRECONF_MARKET_UPDATE:
                 self.on_market_update(message=message_obj)

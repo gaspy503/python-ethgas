@@ -51,7 +51,7 @@ For feedback or suggestions, please reach out via one of the contact methods spe
 
 | Release Version | Changelog           |
 |-----------------|---------------------|
-| `0.2.0`         | Development release |
+| `0.3.0`         | Development release |
 
 ## Documentation
 

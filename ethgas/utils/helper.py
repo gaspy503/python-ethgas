@@ -14,7 +14,10 @@ logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 
 def generate_uuid() -> str:
     return str(uuid.uuid1())[0:8]
-    # return str(uuid.uuid1()).replace('-', '')
+
+
+def generate_uuid_v4() -> str:
+    return str(uuid.uuid4())
 
 
 def get_current_utc_timestamp() -> float:

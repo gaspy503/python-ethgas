@@ -282,6 +282,93 @@ class APIClient:
         return self._send_request(session_type=constants.SessionType.PUBLIC, method=constants.RequestMethod.GET,
                                   url=api_constants.GET_ALL_WB_MARKETS_ENDPOINT)
 
+    def get_pricer_setting(self):
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_PRICER_SETTING)
+
+    def get_enable_pricer(self, enable=True):
+        params = {
+            "enable": enable
+        }
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.POST,
+                                  url=api_constants.POST_ENABLE_PRICER, params=params)
+
+    def get_pricer_account_token(self):
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_PRICER_ACCOUNT_TOKENS)
+
+    def get_pricer_markets_active(self):
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_PRICER_MARKETS_ACTIVE)
+
+    def get_pricer_ip_position(self):
+        res = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                 url=api_constants.GET_PRICER_IP_POSITION)
+        position_dict = {}
+        for position in res['data']['positions']:
+            instrument_id = "ETH-PC-" + str(position['slot'])
+            position['instrument_id'] = instrument_id
+            position_dict[position['instrument_id']] = position
+        return position_dict
+
+    def get_pricer_wb_position(self):
+        res = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                 url=api_constants.GET_PRICER_WB_POSITION)
+        position_dict = {}
+        for position in res['data']['positions']:
+            instrument_id = "ETH-WB-" + str(position['slot'])
+            position['instrument_id'] = instrument_id
+            position_dict[instrument_id] = position
+        return position_dict
+
+    def get_pricer_ip_orders(self, account_id: int | None = None, instrument_id=None,
+                             pending=True) -> dict | Exception:
+        """
+        Args:
+            account_id: Account ID.
+            instrument_id: Instrument ID.
+            pending: Is pending orders.
+
+        Returns:
+            Dictionary of account's inclusion preconf orders.
+        Raises:
+            Exception: If request failed.
+        """
+        params = {
+            "onBook": pending,
+            "limit": 1000,
+        }
+        if instrument_id:
+            params["instrumentId"] = instrument_id
+        if account_id:
+            params["accountId"] = account_id
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_PRICER_IP_ORDERS, params=params)
+
+    def get_pricer_wb_orders(self, account_id: int | None = None, instrument_id=None,
+                             pending=True) -> dict | Exception:
+        """
+        Args:
+            account_id: Account ID.
+            instrument_id: Instrument ID.
+            pending: Is pending orders.
+
+        Returns:
+            Dictionary of account's inclusion preconf orders.
+        Raises:
+            Exception: If request failed.
+        """
+        params = {
+            "onBook": pending,
+            "limit": 1000,
+        }
+        if instrument_id:
+            params["instrumentId"] = instrument_id
+        if account_id:
+            params["accountId"] = account_id
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_PRICER_WB_ORDERS, params=params)
+
     def get_ip_public_txs(self, instrument_id) -> dict | Exception:
         """
         Get all inclusion preconf public transactions from specified instrument.
@@ -297,7 +384,7 @@ class APIClient:
             "instrumentId": instrument_id
         }
         return self._send_request(session_type=constants.SessionType.PUBLIC, method=constants.RequestMethod.GET,
-                                  url=api_constants.GET_IP_PUBLIC_TXS_ENDPOINT, params=params)
+                                  url=api_constants.GET_IP_PUBLIC_TRADES_ENDPOINT, params=params)
 
     def get_wb_public_txs(self, instrument_id) -> dict | Exception:
         """
@@ -313,7 +400,7 @@ class APIClient:
             "instrumentId": instrument_id
         }
         return self._send_request(session_type=constants.SessionType.PUBLIC, method=constants.RequestMethod.GET,
-                                  url=api_constants.GET_WB_PUBLIC_TXS_ENDPOINT, params=params)
+                                  url=api_constants.GET_WB_PUBLIC_TRADES_ENDPOINT, params=params)
 
     # endregion
 
@@ -344,6 +431,11 @@ class APIClient:
         """
         response = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
                                       url=api_constants.GET_ACCOUNT_INFO_ENDPOINT + f'/{self.__default_trading_account}')
+        return response
+
+    def get_account_txs(self):
+        response = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                      url=api_constants.GET_USER_ACCOUNT_TXS_ENDPOINT)
         return response
 
     def get_user_accounts(self) -> list | Exception:
@@ -612,7 +704,7 @@ class APIClient:
         """
         params = {
             "accountId": self.__default_trading_account,
-            "pending": pending,
+            "onBook": pending,
             "limit": 1000,
         }
         if instrument_id:
@@ -621,6 +713,44 @@ class APIClient:
             params["accountId"] = account_id
         return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
                                   url=api_constants.GET_USER_IP_ORDERS_ENDPOINT, params=params)
+
+    def get_account_ip_trades(self, instrument_id) -> dict | Exception:
+        """
+        Get account's inclusion preconf trades on specified instrument.
+        Args:
+            instrument_id: Instrument ID.
+
+        Returns:
+            Dictionary of account's inclusion preconf trades.
+        Raises:
+            Exception: If request failed.
+        """
+        params = {
+            "accountId": self.__default_trading_account,
+            "instrumentId": instrument_id,
+            "limit": 1000,
+        }
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_USER_IP_TRADES, params=params)
+
+    def get_account_wb_trades(self, instrument_id) -> dict | Exception:
+        """
+        Get account's wholeblock trades on specified instrument.
+        Args:
+            instrument_id: Instrument ID.
+
+        Returns:
+            Dictionary of account's wholeblock trades.
+        Raises:
+            Exception: If request failed.
+        """
+        params = {
+            "accountId": self.__default_trading_account,
+            "instrumentId": instrument_id,
+            "limit": 1000,
+        }
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_USER_WB_TRADES, params=params)
 
     def get_account_wb_orders(self, account_id: int | None = None, instrument_id=None,
                               pending=True) -> dict | Exception:
@@ -638,7 +768,7 @@ class APIClient:
         """
         params = {
             "accountId": self.__default_trading_account,
-            "pending": pending,
+            "onBook": pending,
             "limit": 1000,
         }
         if instrument_id:
@@ -679,7 +809,7 @@ class APIClient:
         """
         params = {
             "limit": 100,
-            # "enable": True
+            # "enable": False
         }
         res = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
                                  url=api_constants.GET_USER_WB_POSITIONS_ENDPOINT, params=params)
@@ -690,7 +820,16 @@ class APIClient:
             position_dict[instrument_id] = position
         return position_dict
 
-    def submit_bundle(self, slot_num, replacement_uuid, bundle):
+    def set_empty_block_space(self, slot, enable=True):
+        params = {
+            "slot": slot,
+            "enable": enable
+        }
+        res = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.POST,
+                                 url=api_constants.POST_EMPTY_BLOCK_SPACE, params=params)
+        return res
+
+    def submit_bundle(self, slot_num, replacement_uuid, bundle, ordering=None):
         """
         Submit an inclusion preconf bundle.
         Args:
@@ -704,14 +843,31 @@ class APIClient:
             Exception: If request failed.
         """
         params = {
-            'slotNumber': slot_num,
+            'slot': slot_num,
             'replacementUuid': replacement_uuid,
-            'trxs': bundle
+            'txs': bundle
         }
+        if ordering:
+            params['ordering'] = ordering
 
         res = self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.POST,
                                  url=api_constants.POST_INCLUSION_PRECONF_SEND_BUNDLE, json=params)
+        self.__logger.debug(res)
         return res
+
+    def get_account_bundles(self, slot):
+        params = {
+            "slot": slot
+        }
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_ACCOUNT_BUNDLES_ENDPOINT, params=params)
+
+    def get_bundles(self, slot):
+        params = {
+            "slot": slot
+        }
+        return self._send_request(session_type=constants.SessionType.PRIVATE, method=constants.RequestMethod.GET,
+                                  url=api_constants.GET_BUNDLES_ENDPOINT, params=params)
 
     # endregion
 

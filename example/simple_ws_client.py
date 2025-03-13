@@ -33,5 +33,10 @@ if __name__ == "__main__":
     # subscribe public channels
     # public: inclusion preconf market info channel
     ws.subscribe_market_update(market_type=ws_constants.MarketType.INCLUSION_PRECONF)
+    # ws.subscribe_market_update(market_type=ws_constants.MarketType.INCLUSION_PRECONF, is_subscribe=False)
+    # ws.subscribe_candlestick_update(market_type=ws_constants.MarketType.INCLUSION_PRECONF)
+    # ws.subscribe_recent_trades_update(market_type=ws_constants.MarketType.INCLUSION_PRECONF)
+    # ws.subscribe_orderbook(market_type=ws_constants.MarketType.INCLUSION_PRECONF)
+    # ws.subscribe_block_builder_update(market_type=ws_constants.MarketType.INCLUSION_PRECONF)
     while True:
         time.sleep(1)

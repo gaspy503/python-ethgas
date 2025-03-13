@@ -25,10 +25,9 @@ if __name__ == "__main__":
     # public market info endpoint
     market_info_response = rest.get_all_ip_markets()
     logger.info("inclusion preconf market info: %s", market_info_response)
-    ip_markets = market_info_response.get("data.markets", [])
+    ip_markets = market_info_response.get("data", {}).get("markets", [])
     # randomly select an inclusion preconf market
-    rand_index = random.randint(0, len(ip_markets) - 1)
-    chosen_market = ip_markets[rand_index]
+    chosen_market = ip_markets[random.randint(0, len(ip_markets) - 1)]
 
 
     # send a limit buy order to the inclusion preconf market with minimum quantity (private endpoint)
@@ -38,23 +37,26 @@ if __name__ == "__main__":
     quantity = float(chosen_market.get("minQuantity"))
     # get the maximum price (in ETH) from the inclusion preconf market
     price_eth = float(chosen_market.get("maxPrice"))
-    created_order = rest.create_ip_order(instrument_id=chosen_market.get("instrument_id"),
+    created_order_res = rest.create_ip_order(instrument_id=chosen_market.get("instrumentId"),
                                          side=Order.Side.BUY.value, order_type=Order.Type.LIMIT.value,
                                          quantity=quantity, price=price_eth,
                                          client_order_id=ip_order_id)
-    logger.info(f"created inclusion preconf order: {created_order}")
+    logger.info(f"created inclusion preconf order: {created_order_res}")
 
 
-    # send a limit buy order to the whole block market with minimum quantity (private endpoint)
+    # send a limit buy order to the whole block market (private endpoint)
     # generate a random client order id as replacement uuid
+    market_info_response = rest.get_all_wb_markets()
+    logger.info("whole block market info: %s", market_info_response)
+    wb_markets = market_info_response.get("data", {}).get("markets", [])
+    # randomly select an inclusion preconf market
+    chosen_market = wb_markets[random.randint(0, len(wb_markets) - 1)]
     wb_order_id = helper.generate_uuid()
-    # get the minimum quantity from the inclusion preconf market
-    quantity = float(chosen_market.get("minQuantity"))
-    # get the maximum price (in ETH) from the inclusion preconf market
+    # get the maximum price (in ETH) from the whole block market
     price_eth = float(chosen_market.get("maxPrice"))
     # create an inclusion preconf buy limit order
-    created_order = rest.create_ip_order(instrument_id=chosen_market.get("instrument_id"),
+    created_order_res = rest.create_wb_order(instrument_id=chosen_market.get("instrumentId"),
                                          side=Order.Side.BUY.value, order_type=Order.Type.LIMIT.value,
-                                         quantity=quantity, price=price_eth,
+                                         price=price_eth,
                                          client_order_id=wb_order_id)
-    logger.info(f"created inclusion preconf order: {created_order}")
+    logger.info(f"created whole block order: {created_order_res}")

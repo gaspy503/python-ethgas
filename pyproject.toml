@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python-ethgas"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
   { name="gaspy503", email="gaspy503@gmail.com" },
 ]
 dynamic = ["dependencies"]
 description = "Unofficial EthGas client packages"
 readme = "README.md"
-requires-python = ">=3.11.0,<3.11.6"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

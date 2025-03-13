@@ -28,6 +28,7 @@ class Order:
 
         MARKET = 1
         LIMIT = 2
+        FOK = 3
 
 
 # region fields

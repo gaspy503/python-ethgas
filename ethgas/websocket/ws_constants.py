@@ -4,11 +4,12 @@ from enum import Enum
 # *** Public Channels ***
 class Channel:
     class Public:
-        PRECONF_MARKET_UPDATE = "preConfMarketUpdate"
-        MARKET_PRICE_HISTORY = "marketPriceHistory"
-        RECENT_TRADES = "recentTrades"
-        ORDERBOOK = "orderBook"
-        MARKET_INFO = "marketInfo"
+        PRECONF_MARKET_UPDATE = "preconfMarketUpdate"
+        CANDLESTICK_UPDATE = "candlestickUpdate"
+        RECENT_TRADES_UPDATE = "recentTradeUpdate"
+        ORDERBOOK_UPDATE = "orderBookUpdate"
+        TICKER_UPDATE = "tickerUpdate"
+        BLOCK_BUILDER_UPDATE = "blockBuilderUpdate"
 
     class Private:
         USER_ORDER = "userOrder"
@@ -27,6 +28,7 @@ class QueryType(Enum):
     def __str__(self):
         return str(self.value)
 
+    CANDLESTICKS = "candlesticks"
     CURRENT_SLOT = "currentSlot"
     OPEN_ORDERS = "openOrders"
     CURRENT_POSITIONS = "currentPositions"
