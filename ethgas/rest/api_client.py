@@ -21,14 +21,13 @@ class APIClient:
     API Client
     """
 
-    def __init__(self, rest_url: str, chain_id: str, account_address: str = None, private_key: str = None,
+    def __init__(self, rest_url: str, account_address: str = None, private_key: str = None,
                  verify_tls: bool = True, refresh_interval: int = 3600, re_login_interval: int = 604800,
                  user_agent: str = None, logger: logging.Logger = None):
         """
         Initialize the EthGas API Client.
         Args:
             rest_url: EthGas REST API URL
-            chain_id: EthGas chain ID
             account_address: account address
             private_key: account private key
             verify_tls: Verify TLS certs. (default: True)
@@ -40,7 +39,6 @@ class APIClient:
         self.__logger = logger
         self.__user_agent = user_agent
         self.__rest_url = rest_url
-        self.__chain_id = chain_id
         self.__verify_tls = verify_tls
         self.__is_login = False
         self.__account_address = account_address
@@ -50,6 +48,7 @@ class APIClient:
         self.__public_session = None
         self.__private_session = None
         self.__access_token = None
+        self.__refresh_token = None
         self.__last_refresh_timestamp = None
         self.__refresh_interval = refresh_interval
         self.__re_login_interval = re_login_interval
@@ -120,7 +119,7 @@ class APIClient:
         """
         Perform login, verify and get access token.
 
-        Sends login request using account address and chain ID, then verifies the login response.
+        Sends login request using account address, then verifies the login response.
         After login is verified, saves access token if login succeeds.
 
         Raises:
@@ -133,7 +132,7 @@ class APIClient:
         try:
             # public session for login
             self.__login_session = self._init_session()
-            params = {constants.ADDRESS: self.__account_address, constants.CHAIN_ID: self.__chain_id}
+            params = {constants.ADDRESS: self.__account_address}
             verify_info = self._send_request(session_type=constants.SessionType.Login,
                                              method=constants.RequestMethod.POST,
                                              url=api_constants.LOGIN_ENDPOINT, params=params)
@@ -164,6 +163,7 @@ class APIClient:
             login_info = self._send_request(session_type=constants.SessionType.Login,
                                             method=constants.RequestMethod.POST,
                                             url=api_constants.VERIFY_LOGIN_ENDPOINT, params=params)
+            self.__refresh_token = login_info.get("x_auth_refresh_token", None)
             login_info = login_info.get('data', {})
             self.__access_token = login_info.get("accessToken", {}).get("token", None)
             if self.__access_token is None:
@@ -196,7 +196,7 @@ class APIClient:
             with self.__session_lock:
                 start_t = helper.get_current_utc_timestamp()
                 try:
-                    body = {constants.REFRESH_TOKEN: self.__access_token}
+                    body = {constants.REFRESH_TOKEN: self.__refresh_token}
                     refresh_info = self._send_request(session_type=constants.SessionType.Login,
                                                       method=constants.RequestMethod.POST,
                                                       url=api_constants.REFRESH_ENDPOINT, data=body)
@@ -963,6 +963,8 @@ class APIClient:
 
             self.__logger.debug(f"receive response {res}")
             # by default return full response, unless it has the "data" attribute, then this is returned
+            if response.cookies.get("x_auth_refresh_token") is not None:
+                res["x_auth_refresh_token"] = response.cookies.get("x_auth_refresh_token")
             return res
         except exceptions.UnauthorizedError as e:
             self.__logger.error(

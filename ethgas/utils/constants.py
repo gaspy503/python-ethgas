@@ -33,7 +33,6 @@ class Order:
 
 # region fields
 ADDRESS = "addr"
-CHAIN_ID = "chainId"
 REFRESH_TOKEN = "refreshToken"
 NONCE_HASH = "nonceHash"
 SIGNATURE = "signature"

@@ -124,10 +124,8 @@ from ethgas.rest.api_client import APIClient
 # create logger
 logger = helper.create_logger(logger_level=logging.INFO, logger_name="public_api_client")
 rest_url = "<EthGas REST API URL>"
-chain_id = "<Chain ID>"
 # create public api client
-rest = APIClient(rest_url=rest_url, chain_id=chain_id,
-                 logger=logger)
+rest = APIClient(rest_url=rest_url, logger=logger)
 ```
 
 ##### 2.1b Private REST client
@@ -141,12 +139,11 @@ from ethgas.rest.api_client import APIClient
 # create logger
 logger = helper.create_logger(logger_level=logging.INFO, logger_name="private_api_client")
 rest_url = "<EthGas REST API URL>"
-chain_id = "<Chain ID>"
 # set account address and private key
 address = "<Account Address>"
 private_key = "<Account Private Key>"
 # create private api client
-rest = APIClient(rest_url=rest_url, chain_id=chain_id,
+rest = APIClient(rest_url=rest_url, 
                  account_address=address, private_key=private_key,
                  logger=logger)
 ```
@@ -186,12 +183,11 @@ from ethgas.websocket.ws_client import WsClient
 # create logger
 logger = helper.create_logger(logger_level=logging.INFO, logger_name="private_ws_client")
 rest_url = "<EthGas REST API URL>"
-chain_id = "<Chain ID>"
 # set account address and private key
 address = "<Account Address>"
 private_key = "<Account Private Key>"
 # create private api client
-rest = APIClient(rest_url=rest_url, chain_id=chain_id,
+rest = APIClient(rest_url=rest_url, 
                  account_address=address, private_key=private_key,
                  logger=logger)
 ws_url = "<EthGas Websocket URL>"

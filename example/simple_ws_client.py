@@ -12,14 +12,13 @@ if __name__ == "__main__":
     logger.info("initialize simple websocket client...")
     # remember to set config in .env file or set env variable (see .env.example)
     rest_url = os.getenv("REST_URL")
-    chain_id = os.getenv("CHAIN_ID")
     ws_url = os.getenv("WS_URL")
     # set account address and private key
     address = os.getenv("EXAMPLE_ACCOUNT_ADDRESS")
     private_key = os.getenv("EXAMPLE_PRIVATE_KEY")
     # create api client
     # if account_address and private_key are None, then the api client will use public REST APIs only
-    rest = APIClient(rest_url=rest_url, chain_id=chain_id,
+    rest = APIClient(rest_url=rest_url,
                      account_address=address, private_key=private_key,
                      verify_tls=True, user_agent=None, refresh_interval=3600, re_login_interval=604800,
                      logger=logger)
